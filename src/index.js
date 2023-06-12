@@ -1,113 +1,81 @@
+// import { fetchBreeds, fetchCatByBreed } from "./js/cat-api";
+// import catApi from "./js/cat-api";
+
+// const { fetchBreeds, fetchCatByBreed } = catApi;
 
 
-import { fetchBreeds } from './js/cat-api';
+const breedSelect = document.getElementById("breed-select");
+const catInfoContainer = document.querySelector(".cat-info");
+const catImage = document.getElementById("cat-image");
+const catInfo = document.getElementById("cat-info");
+const loader = document.querySelector(".loader");
+const error = document.querySelector(".error");
 
-import { useEffect, useState } from 'react';
-import SlimSelect from 'slim-select';
+const showLoader = () => {
+  loader.style.display = "block";
+};
 
+const hideLoader = () => {
+  loader.style.display = "none";
+};
 
-import { fetchBreeds, fetchCatByBreed } from './js/cat-api';
+const showError = (message) => {
+  error.textContent = message;
+  error.style.display = "block";
+};
 
-import 'slim-select/dist/slimselect.css';
-import 'notiflix/dist/notiflix-3.2.6.min.css';
-import './css/styles.css';
+const hideError = () => {
+  error.style.display = "none";
+};
 
-function App() {
-  const [breeds, setBreeds] = useState([]);
-  const [selectedBreed, setSelectedBreed] = useState('');
-  const [catInfo, setCatInfo] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+const populateBreedSelect = (breeds) => {
+  breeds.forEach((breed) => {
+    const option = document.createElement("option");
+    option.value = breed.id;
+    option.textContent = breed.name;
+    breedSelect.appendChild(option);
+  });
+};
 
-  useEffect(() => {
-    setLoading(true);
-    setError(false);
+const showCatInfo = (cat) => {
+  catImage.src = cat.url;
+  catImage.alt = `Image of ${cat.name}`;
+  catInfo.innerHTML = `
+    <h2>${cat.name}</h2>
+    <p>Description: ${cat.description}</p>
+    <p>Temperament: ${cat.temperament}</p>
+  `;
+};
 
-    fetchBreeds()
-      .then((data) => {
-        setBreeds(data);
-        setLoading(false);
+const handleBreedSelectChange = () => {
+  const selectedBreedId = breedSelect.value;
+  if (selectedBreedId) {
+    showLoader();
+    hideError();
+    fetchCatByBreed(selectedBreedId)
+      .then((cat) => {
+        showCatInfo(cat);
+        hideLoader();
       })
       .catch((error) => {
-        console.error('Error fetching cat breeds:', error);
-        setLoading(false);
-        setError(true);
+        showError("Failed to fetch cat");
+        hideLoader();
       });
-  }, []);
+  } else {
+    catInfoContainer.style.display = "none";
+  }
+};
 
-  useEffect(() => {
-    if (selectedBreed) {
-      setLoading(true);
-      setError(false);
+breedSelect.addEventListener("change", handleBreedSelectChange);
 
-      fetchCatByBreed(selectedBreed)
-        .then((data) => {
-          setCatInfo(data[0]);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error('Error fetching cat by breed:', error);
-          setLoading(false);
-          setError(true);
-        });
-    } else {
-      setCatInfo(null);
-    }
-  }, [selectedBreed]);
-
-  useEffect(() => {
-    new SlimSelect({
-      select: '#breed-select',
-    });
-  }, [breeds]);
-
-  const handleBreedChange = (event) => {
-    const breedId = event.target.value;
-    setSelectedBreed(breedId);
-  };
-
-  const handleRetry = () => {
-    setError(false);
-    setSelectedBreed('');
-  };
-
-  return (
-    <div className="container">
-      {loading && (
-        <div className="loader-container">
-          <div className="loader"></div>
-        </div>
-      )}
-      {error && (
-        <div className="error-container">
-          <p className="error">An error occurred. Please try again.</p>
-          <button className="retry-button" onClick={handleRetry}>
-            Retry
-          </button>
-        </div>
-      )}
-
-      <div className="select-container">
-        <select id="breed-select" value={selectedBreed} onChange={handleBreedChange}>
-          <option value="">Select a breed</option>
-          {breeds.map((breed) => (
-            <option key={breed.id} value={breed.id}>
-              {breed.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {catInfo && (
-        <div className="cat-info">
-          <img src={catInfo.url} alt="Cat" className="cat-image" />
-          <h2 className="cat-name">{catInfo.breeds[0].name}</h2>
-          <p className="cat-description">{catInfo.breeds[0].description}</p>
-          <p className="cat-temperament">Temperament: {catInfo.breeds[0].temperament}</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default App;
+// Fetch breeds on page load
+showLoader();
+fetchBreeds()
+  .then((breeds) => {
+    populateBreedSelect(breeds);
+    hideLoader();
+  })
+  .catch((error) => {
+    showError("Failed to fetch breeds");
+    hideLoader();
+  });
