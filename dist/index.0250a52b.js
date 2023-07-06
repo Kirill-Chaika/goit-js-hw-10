@@ -2940,17 +2940,19 @@ var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
 (0, _axiosDefault.default).defaults.headers.common["x-api-key"] = "live_qX3jDfl6LZPHo4tDqz6q5vYSj5jz1oaxYAyuWKQJvqhuR1sOgNl1Mq09li2F8LNh";
 const BASE_URL = "https://api.thecatapi.com/v1";
-//https://api.thecatapi.com/v1/images
-fetch(`${BASE_URL}/breeds`).then((res)=>{
-    if (!res.ok) throw new Error(res.status);
-    return res.json();
-}).then((data)=>{
-    console.log(data);
-}).catch((err)=>{
-    console.log(err);
+const axios = require("5028ad3e0ea0054a");
+// Make a request for a user with a given ID
+(0, _axiosDefault.default).get(`${BASE_URL}/user`).then(function(response) {
+    // handle success
+    console.log(response);
+}).catch(function(error) {
+    // handle error
+    console.log(error);
+}).finally(function() {
+// always executed
 });
 
-},{"axios":"jo6P5","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jo6P5":[function(require,module,exports) {
+},{"axios":"jo6P5","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","5028ad3e0ea0054a":"jo6P5"}],"jo6P5":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>(0, _axiosJsDefault.default));
