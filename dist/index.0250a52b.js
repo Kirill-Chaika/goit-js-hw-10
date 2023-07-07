@@ -2942,7 +2942,7 @@ var _axiosDefault = parcelHelpers.interopDefault(_axios);
 const BASE_URL = "https://api.thecatapi.com/v1";
 const axios = require("5028ad3e0ea0054a");
 // Make a request for a user with a given ID
-(0, _axiosDefault.default).get(`${BASE_URL}/user`).then(function(response) {
+(0, _axiosDefault.default).get(`${BASE_URL}/breeds`).then(function(response) {
     // handle success
     console.log(response);
 }).catch(function(error) {

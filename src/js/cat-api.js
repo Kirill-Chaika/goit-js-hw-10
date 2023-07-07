@@ -8,7 +8,7 @@ const BASE_URL = 'https://api.thecatapi.com/v1';
 const axios = require('axios');
 
 // Make a request for a user with a given ID
-axios.get(`${BASE_URL}/user`)
+axios.get(`${BASE_URL}/breeds`)
   .then(function (response) {
     // handle success
     console.log(response);
